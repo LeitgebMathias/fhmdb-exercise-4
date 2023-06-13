@@ -27,7 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MovieListController implements Initializable {
+public class MovieListController implements Initializable,Observer {
+
     @FXML
     public JFXButton searchBtn;
 
@@ -68,6 +69,9 @@ public class MovieListController implements Initializable {
                     movie.getRating());
             try {
                 WatchlistRepository repository = new WatchlistRepository();
+
+                // Observer wird der Subscriber Liste hinzugefügt.
+                repository.subscribe(this);
                 repository.addToWatchlist(watchlistMovieEntity);
             } catch (DataBaseException e) {
                 UserDialog dialog = new UserDialog("Database Error", "Could not add movie to watchlist");
@@ -237,5 +241,11 @@ public class MovieListController implements Initializable {
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
+    }
+
+    @Override
+    public void update(String informationToDisplay) {
+        UserDialog dialog = new UserDialog("Watchlist", informationToDisplay);
+        dialog.show();
     }
 }
