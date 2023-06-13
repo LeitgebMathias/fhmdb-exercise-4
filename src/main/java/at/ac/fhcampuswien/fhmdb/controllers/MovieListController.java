@@ -8,7 +8,8 @@ import at.ac.fhcampuswien.fhmdb.database.WatchlistMovieEntity;
 import at.ac.fhcampuswien.fhmdb.database.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import at.ac.fhcampuswien.fhmdb.models.SortedState;
+import at.ac.fhcampuswien.fhmdb.states.UnsortedState;
+import at.ac.fhcampuswien.fhmdb.states.State;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import at.ac.fhcampuswien.fhmdb.ui.UserDialog;
 import com.jfoenix.controls.JFXButton;
@@ -51,9 +52,10 @@ public class MovieListController implements Initializable {
 
     public List<Movie> allMovies;
 
-    protected ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
+    // changed from protected to public for access
+    public ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
-    protected SortedState sortedState;
+    private State state;
 
     private final ClickEventHandler onAddToWatchlistClicked = (clickedItem) -> {
         if (clickedItem instanceof Movie movie) {
@@ -77,6 +79,13 @@ public class MovieListController implements Initializable {
         }
     };
 
+    // setzt aktuellen Sortierzustand des Controllers
+    public void setSortState(State state){
+        this.state = state;
+        state.sort(); // added for applyCurrentSortedState
+        // notwendig damit auch gefilterte Liste sortiert ist
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initializeState();
@@ -94,7 +103,11 @@ public class MovieListController implements Initializable {
 
         setMovies(result);
         setMovieList(result);
-        sortedState = SortedState.NONE;
+
+        // Controller startet im unsortierten Zustand
+        setSortState(new UnsortedState(this));
+        // UI: Buttontext wird initialisiert
+        state.updateSortButtonText();
     }
 
     public void initializeLayout() {
@@ -128,7 +141,6 @@ public class MovieListController implements Initializable {
         ratingFromComboBox.setPromptText("Filter by Rating");
     }
 
-
     public void setMovies(List<Movie> movies) {
         allMovies = movies;
     }
@@ -136,25 +148,6 @@ public class MovieListController implements Initializable {
     public void setMovieList(List<Movie> movies) {
         observableMovies.clear();
         observableMovies.addAll(movies);
-    }
-    public void sortMovies(){
-        if (sortedState == SortedState.NONE || sortedState == SortedState.DESCENDING) {
-            sortMovies(SortedState.ASCENDING);
-        } else if (sortedState == SortedState.ASCENDING) {
-            sortMovies(SortedState.DESCENDING);
-        }
-    }
-    // sort movies based on sortedState
-    // by default sorted state is NONE
-    // afterwards it switches between ascending and descending
-    public void sortMovies(SortedState sortDirection) {
-        if (sortDirection == SortedState.ASCENDING) {
-            observableMovies.sort(Comparator.comparing(Movie::getTitle));
-            sortedState = SortedState.ASCENDING;
-        } else {
-            observableMovies.sort(Comparator.comparing(Movie::getTitle).reversed());
-            sortedState = SortedState.DESCENDING;
-        }
     }
 
     public List<Movie> filterByQuery(List<Movie> movies, String query){
@@ -212,9 +205,12 @@ public class MovieListController implements Initializable {
         setMovieList(movies);
         // applyAllFilters(searchQuery, genre);
 
-        if(sortedState != SortedState.NONE) {
-            sortMovies(sortedState);
-        }
+        applyCurrentSortState(); // notwendig damit auch gefilterte Liste sortiert ist
+    }
+
+    // TODO LILLI
+    private void applyCurrentSortState() { // notwendig damit auch gefilterte Liste sortiert ist
+        state.sort();
     }
 
     public String validateComboboxValue(Object value) {
@@ -236,6 +232,8 @@ public class MovieListController implements Initializable {
     }
 
     public void sortBtnClicked(ActionEvent actionEvent) {
-        sortMovies();
+        state.changeSortStates();
+        state.updateSortButtonText();
+        state.sort();
     }
 }
