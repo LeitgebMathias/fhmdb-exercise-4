@@ -27,7 +27,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class MovieListController implements Initializable {
+public class MovieListController implements Initializable,Observer {
+
     @FXML
     public JFXButton searchBtn;
 
@@ -68,6 +69,10 @@ public class MovieListController implements Initializable {
                     movie.getRating());
             try {
                 WatchlistRepository repository = new WatchlistRepository();
+
+                // Observer (also der aktuelle MovieListController) wird der Subscriber Liste hinzugefügt.
+                // Ohne diesem Befehl würde die Update Methode vom MovieListController nicht aufgerufen werden.
+                repository.subscribe(this);
                 repository.addToWatchlist(watchlistMovieEntity);
             } catch (DataBaseException e) {
                 UserDialog dialog = new UserDialog("Database Error", "Could not add movie to watchlist");
@@ -237,5 +242,14 @@ public class MovieListController implements Initializable {
 
     public void sortBtnClicked(ActionEvent actionEvent) {
         sortMovies();
+    }
+
+    // Update-Methode wird von Observable-Methode "notifySubscribers()" aufgerufen.
+    // Im konkreten Fall übergibt die Klasse WatchlistRepository den Text "infromationToDisplay"
+    // welcher dann in einem UserDialog dem Benutzer angezeigt wird.
+    @Override
+    public void update(String informationToDisplay) {
+        UserDialog dialog = new UserDialog("Watchlist", informationToDisplay);
+        dialog.show();
     }
 }
