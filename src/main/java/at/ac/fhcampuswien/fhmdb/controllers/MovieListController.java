@@ -70,7 +70,8 @@ public class MovieListController implements Initializable,Observer {
             try {
                 WatchlistRepository repository = new WatchlistRepository();
 
-                // Observer wird der Subscriber Liste hinzugefügt.
+                // Observer (also der aktuelle MovieListController) wird der Subscriber Liste hinzugefügt.
+                // Ohne diesem Befehl würde die Update Methode vom MovieListController nicht aufgerufen werden.
                 repository.subscribe(this);
                 repository.addToWatchlist(watchlistMovieEntity);
             } catch (DataBaseException e) {
@@ -243,6 +244,9 @@ public class MovieListController implements Initializable,Observer {
         sortMovies();
     }
 
+    // Update-Methode wird von Observable-Methode "notifySubscribers()" aufgerufen.
+    // Im konkreten Fall übergibt die Klasse WatchlistRepository den Text "infromationToDisplay"
+    // welcher dann in einem UserDialog dem Benutzer angezeigt wird.
     @Override
     public void update(String informationToDisplay) {
         UserDialog dialog = new UserDialog("Watchlist", informationToDisplay);
