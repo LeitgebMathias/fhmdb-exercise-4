@@ -8,7 +8,26 @@ import java.util.List;
 
 public class WatchlistRepository implements Observable {
 
-    Dao<WatchlistMovieEntity, Long> dao;
+    Dao<WatchlistMovieEntity, Long> dao; //Verwaltung von DB-Zugriffen
+
+    //private final List<Observer> subscribers = new ArrayList<>();
+
+    private static WatchlistRepository instance; //Singleton-Instanz der WatchlistRepository KLasse
+
+    //private WatchlistRepository() {
+    //}
+    static { //static Initialisierungsblock: Lädt sobald Klasse geladen wird.
+        try {
+            instance = new WatchlistRepository();
+            instance.dao = DatabaseManager.getInstance().getWatchlistDao(); //DAO(Database Access Object) wird zugewiesen (abgerufen von DatabaseManager Klasse)
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e); //Falls Fehler beim Erstellen der Singleton instanz auftritt.
+        }
+    }
+
+    public static WatchlistRepository getInstance() { //Gibt Sinleton Instanz zurück
+        return instance;
+    }
 
     // Liste in der alle Subscribers hinterlegt sind.
     private final List<Observer> subscribers = new ArrayList<>();
