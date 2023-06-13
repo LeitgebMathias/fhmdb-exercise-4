@@ -4,8 +4,8 @@ import at.ac.fhcampuswien.fhmdb.controllers.Observer;
 
 public interface Observable {
 
-    public void subscribe(Observer observer);
-    public void unsubscribe(Observer observer);
-    public void notifySubscribers();
+     void subscribe(Observer observer);
+     void unsubscribe(Observer observer);
+     void notifySubscribers();
 
 }
