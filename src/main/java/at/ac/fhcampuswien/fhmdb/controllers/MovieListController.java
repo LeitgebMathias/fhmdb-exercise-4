@@ -87,8 +87,6 @@ public class MovieListController implements Initializable,Observer {
     // setzt aktuellen Sortierzustand des Controllers
     public void setSortState(State state){
         this.state = state;
-        state.sort(); // added for applyCurrentSortedState
-        // notwendig damit auch gefilterte Liste sortiert ist
     }
 
     @Override
@@ -178,21 +176,6 @@ public class MovieListController implements Initializable,Observer {
         return movies.stream().filter(movie -> movie.getGenres().contains(genre)).toList();
     }
 
-    public void applyAllFilters(String searchQuery, Object genre) {
-        List<Movie> filteredMovies = allMovies;
-
-        if (!searchQuery.isEmpty()) {
-            filteredMovies = filterByQuery(filteredMovies, searchQuery);
-        }
-
-        if (genre != null && !genre.toString().equals("No filter")) {
-            filteredMovies = filterByGenre(filteredMovies, Genre.valueOf(genre.toString()));
-        }
-
-        observableMovies.clear();
-        observableMovies.addAll(filteredMovies);
-    }
-
     public void searchBtnClicked(ActionEvent actionEvent) {
         String searchQuery = searchField.getText().trim().toLowerCase();
         String releaseYear = validateComboboxValue(releaseYearComboBox.getSelectionModel().getSelectedItem());
@@ -208,7 +191,6 @@ public class MovieListController implements Initializable,Observer {
 
         setMovies(movies);
         setMovieList(movies);
-        // applyAllFilters(searchQuery, genre);
 
         applyCurrentSortState(); // notwendig damit auch gefilterte Liste sortiert ist
     }

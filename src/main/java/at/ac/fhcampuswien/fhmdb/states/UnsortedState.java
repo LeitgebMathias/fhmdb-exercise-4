@@ -11,7 +11,6 @@ public class UnsortedState extends State {
 
     @Override
     public void sort() {
-        Collections.shuffle(movieListController.observableMovies);
     }
 
     @Override

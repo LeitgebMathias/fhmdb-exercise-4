@@ -15,12 +15,12 @@ public class DescendingState extends State {
     }
     @Override
     public void updateSortButtonText() {
-        movieListController.sortBtn.setText("Unsort");
+        movieListController.sortBtn.setText("Sort (asc)");
     }
 
-    // nächster Sortierzustand wird auf Unsorted festgelegt
+    // nächster Sortierzustand wird auf Ascending festgelegt
     @Override
     public void changeSortStates() {
-        movieListController.setSortState(new UnsortedState(movieListController));
+        movieListController.setSortState(new AscendingState(movieListController));
     }
 }
