@@ -13,9 +13,14 @@ import java.util.Objects;
 public class FhmdbApplication extends Application {
     @Override
     public void start(Stage stage) {
+
+        // Instanziierung einer MainController-Factory
         FactoryMainController factoryMainController = new FactoryMainController();
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource(UIComponent.HOME.path));
+        // Mit dem Befehl bestimmt man, dass für die Erstellung eines Controllers auf die übergebene
+        // Factory zugegriffen werden soll.
         fxmlLoader.setControllerFactory(factoryMainController);
+
         try{
             Scene scene = new Scene(fxmlLoader.load(), 890, 620);
             scene.getStylesheets().add(Objects.requireNonNull(FhmdbApplication.class.getResource("/styles/styles.css")).toExternalForm());

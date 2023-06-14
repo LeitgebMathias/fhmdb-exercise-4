@@ -29,7 +29,10 @@ public class MainController {
 
     private HamburgerBasicCloseTransition transition;
 
+    // Factory, welche für die (Singleton-) Erstellung eines MovieListControllers benötigt wird.
     private final FactoryMovieListController factoryForMovieListController = new FactoryMovieListController();
+
+    // Factory, welche für die (Singleton-) Erstellung eines WatchlistControllers benötigt wird.
     private final FactoryWatchlistController factoryForWatchlistController = new FactoryWatchlistController();
 
     public void initialize() {
@@ -70,8 +73,12 @@ public class MainController {
     public void setContent(String fxmlPath){
 
         FXMLLoader loader = new FXMLLoader(MainController.class.getResource(fxmlPath));
+        // Wenn auf die Movielist gewechselt wird, dann soll der MovieListController erstellt bzw. geladen werden.
         if(fxmlPath.equals(UIComponent.MOVIELIST.path)) loader.setControllerFactory(factoryForMovieListController);
+
+        // Wenn auf die Watchlist gewechselt wird, dann soll der WatchlistController erstellt bzw. geladen werden.
         if(fxmlPath.equals(UIComponent.WATCHLIST.path)) loader.setControllerFactory(factoryForWatchlistController);
+
         try {
             mainPane.setCenter(loader.load());
         } catch (Exception e) {
