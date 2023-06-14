@@ -18,6 +18,7 @@ public class FactoryMainController implements Callback<Class<?>, Object> {
                 e.printStackTrace();
             }
         }
+        System.out.println("Es wird ein MainController zurückgegeben.");
         return controllerInstance;
     }
 }

@@ -18,6 +18,7 @@ public class FactoryMovieListController implements Callback<Class<?>, Object> {
                 e.printStackTrace();
             }
         }
+        System.out.println("Es wird ein MovieListController zurückgegeben.");
         return controllerInstance;
     }
 }

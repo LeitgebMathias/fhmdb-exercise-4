@@ -18,6 +18,7 @@ public class FactoryWatchlistController implements Callback<Class<?>, Object> {
                 e.printStackTrace();
             }
         }
+        System.out.println("Es wurde ein WatchlistController zurückgegeben!");
         return controllerInstance;
     }
 }
