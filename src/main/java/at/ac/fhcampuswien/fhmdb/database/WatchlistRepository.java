@@ -10,35 +10,26 @@ public class WatchlistRepository implements Observable {
 
     Dao<WatchlistMovieEntity, Long> dao; //Verwaltung von DB-Zugriffen
 
-    //private final List<Observer> subscribers = new ArrayList<>();
 
     private static WatchlistRepository instance; //Singleton-Instanz der WatchlistRepository KLasse
 
-    //private WatchlistRepository() {
-    //}
-    static { //static Initialisierungsblock: Lädt sobald Klasse geladen wird.
-        try {
-            instance = new WatchlistRepository();
-            instance.dao = DatabaseManager.getInstance().getWatchlistDao(); //DAO(Database Access Object) wird zugewiesen (abgerufen von DatabaseManager Klasse)
-        } catch (Exception e) {
-            throw new ExceptionInInitializerError(e); //Falls Fehler beim Erstellen der Singleton instanz auftritt.
-        }
-    }
-
-    public static WatchlistRepository getInstance() { //Gibt Sinleton Instanz zurück
-        return instance;
-    }
-
-    // Liste in der alle Subscribers hinterlegt sind.
-    private final List<Observer> subscribers = new ArrayList<>();
-
-    public WatchlistRepository() throws DataBaseException {
+    private WatchlistRepository() throws DataBaseException {
         try {
             this.dao = DatabaseManager.getInstance().getWatchlistDao();
         } catch (Exception e) {
             throw new DataBaseException(e.getMessage());
         }
     }
+
+    public static WatchlistRepository getInstance() throws DataBaseException { //Gibt Singleton Instanz zurück
+        if(instance == null){
+            instance = new WatchlistRepository();
+        }
+        return instance;
+    }
+
+    // Liste in der alle Subscribers hinterlegt sind.
+    private final List<Observer> subscribers = new ArrayList<>();
 
     public List<WatchlistMovieEntity> readWatchlist() throws DataBaseException {
         try {
@@ -88,7 +79,9 @@ public class WatchlistRepository implements Observable {
     // aufgerufen wird.
     @Override
     public void subscribe(Observer observer) {
-        subscribers.add(observer);
+        // Es wird abgefragt, ob ein Observer schon ein Subscriber ist, bevor er als
+        // Subscriber hinzugefügt wird.
+        if(!(subscribers.contains(observer))) subscribers.add(observer);
     }
 
     // Methode entfernt Observer aus der Liste, welche beim Aufruf von "notifySubscribers" aufgerufen werden.

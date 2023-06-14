@@ -70,10 +70,10 @@ public class MovieListController implements Initializable,Observer {
                     movie.getLengthInMinutes(),
                     movie.getRating());
             try {
-                WatchlistRepository repository = new WatchlistRepository();
+                WatchlistRepository repository = WatchlistRepository.getInstance();
 
                 // Observer (also der aktuelle MovieListController) wird der Subscriber Liste hinzugefügt.
-                // Ohne diesem Befehl würde die Update Methode vom MovieListController nicht aufgerufen werden.
+                // Ohne diesem Befehl würde die Update-Methode vom MovieListController nicht aufgerufen werden.
                 repository.subscribe(this);
                 repository.addToWatchlist(watchlistMovieEntity);
             } catch (DataBaseException e) {
@@ -213,7 +213,7 @@ public class MovieListController implements Initializable,Observer {
         applyCurrentSortState(); // notwendig damit auch gefilterte Liste sortiert ist
     }
 
-    // TODO LILLI
+
     private void applyCurrentSortState() { // notwendig damit auch gefilterte Liste sortiert ist
         state.sort();
     }
