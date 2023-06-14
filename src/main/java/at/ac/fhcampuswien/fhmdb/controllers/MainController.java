@@ -29,6 +29,9 @@ public class MainController {
 
     private HamburgerBasicCloseTransition transition;
 
+    private final FactoryMovieListController factoryForMovieListController = new FactoryMovieListController();
+    private final FactoryWatchlistController factoryForWatchlistController = new FactoryWatchlistController();
+
     public void initialize() {
         transition = new HamburgerBasicCloseTransition(hamburgerMenu);
         transition.setRate(-1);
@@ -65,7 +68,10 @@ public class MainController {
     }
 
     public void setContent(String fxmlPath){
+
         FXMLLoader loader = new FXMLLoader(MainController.class.getResource(fxmlPath));
+        if(fxmlPath.equals(UIComponent.MOVIELIST.path)) loader.setControllerFactory(factoryForMovieListController);
+        if(fxmlPath.equals(UIComponent.WATCHLIST.path)) loader.setControllerFactory(factoryForWatchlistController);
         try {
             mainPane.setCenter(loader.load());
         } catch (Exception e) {

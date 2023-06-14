@@ -109,8 +109,9 @@ public class MovieCell extends ListCell<Movie> {
                     .map(Enum::toString)
                     .collect(Collectors.joining(", "));
             genre.setText(genres);
-
-            detail.setMaxWidth(this.getScene().getWidth() - 30);
+            try {
+                detail.setMaxWidth(this.getScene().getWidth() - 30);
+            }catch (NullPointerException npe){}
 
             setGraphic(layout);
         }
