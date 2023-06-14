@@ -13,6 +13,7 @@ public class WatchlistRepository implements Observable {
 
     private static WatchlistRepository instance; //Singleton-Instanz der WatchlistRepository KLasse
 
+    // Privater Konstruktor, der nur innerhalb der Klasse aufgerufen werden kann
     private WatchlistRepository() throws DataBaseException {
         try {
             this.dao = DatabaseManager.getInstance().getWatchlistDao();
@@ -21,7 +22,8 @@ public class WatchlistRepository implements Observable {
         }
     }
 
-    public static WatchlistRepository getInstance() throws DataBaseException { //Gibt Singleton Instanz zurück
+    public static WatchlistRepository getInstance() throws DataBaseException { //Gibt Singleton Instanz zurück.
+        // Nur wenn die Instanz noch nicht initialisiert wurde, passiert es.
         if(instance == null){
             instance = new WatchlistRepository();
         }
@@ -81,6 +83,8 @@ public class WatchlistRepository implements Observable {
     public void subscribe(Observer observer) {
         // Es wird abgefragt, ob ein Observer schon ein Subscriber ist, bevor er als
         // Subscriber hinzugefügt wird.
+        // Abfrage kann mit "contains" gemacht werden, da die dahinterstehende Equals
+        // - Funktion per Default die Objektreferenzen vergleicht, was hier gewollt ist.
         if(!(subscribers.contains(observer))) subscribers.add(observer);
     }
 
