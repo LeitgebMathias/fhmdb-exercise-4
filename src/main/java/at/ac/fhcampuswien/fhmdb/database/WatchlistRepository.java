@@ -8,18 +8,30 @@ import java.util.List;
 
 public class WatchlistRepository implements Observable {
 
-    Dao<WatchlistMovieEntity, Long> dao;
+    Dao<WatchlistMovieEntity, Long> dao; //Verwaltung von DB-Zugriffen
 
-    // Liste in der alle Subscribers hinterlegt sind.
-    private final List<Observer> subscribers = new ArrayList<>();
 
-    public WatchlistRepository() throws DataBaseException {
+    private static WatchlistRepository instance; //Singleton-Instanz der WatchlistRepository KLasse
+
+    // Privater Konstruktor, der nur innerhalb der Klasse aufgerufen werden kann
+    private WatchlistRepository() throws DataBaseException {
         try {
             this.dao = DatabaseManager.getInstance().getWatchlistDao();
         } catch (Exception e) {
             throw new DataBaseException(e.getMessage());
         }
     }
+
+    public static WatchlistRepository getInstance() throws DataBaseException { //Gibt Singleton Instanz zurück.
+        // Nur wenn die Instanz noch nicht initialisiert wurde, passiert es.
+        if(instance == null){
+            instance = new WatchlistRepository();
+        }
+        return instance;
+    }
+
+    // Liste in der alle Subscribers hinterlegt sind.
+    private final List<Observer> subscribers = new ArrayList<>();
 
     public List<WatchlistMovieEntity> readWatchlist() throws DataBaseException {
         try {
@@ -69,7 +81,11 @@ public class WatchlistRepository implements Observable {
     // aufgerufen wird.
     @Override
     public void subscribe(Observer observer) {
-        subscribers.add(observer);
+        // Es wird abgefragt, ob ein Observer schon ein Subscriber ist, bevor er als
+        // Subscriber hinzugefügt wird.
+        // Abfrage kann mit "contains" gemacht werden, da die dahinterstehende Equals
+        // - Funktion per Default die Objektreferenzen vergleicht, was hier gewollt ist.
+        if(!(subscribers.contains(observer))) subscribers.add(observer);
     }
 
     // Methode entfernt Observer aus der Liste, welche beim Aufruf von "notifySubscribers" aufgerufen werden.
